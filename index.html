@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Tahun Baru</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <style>
+    @keyframes fireworks {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(3); }
+    }
+    .firework {
+      animation: fireworks 2s ease-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-500 via-pink-500 to-blue-600 text-white flex items-center justify-center h-screen">
+
+<div id="app" class="text-center">
+  <div v-if="days > 0 || hours > 0 || minutes > 0 || seconds > 0">
+    <p class="text-2xl mb-4">Hitungan Mundur Menuju 2025</p>
+    <h1 class="text-6xl font-bold">{{ days }} Hari</h1>
+    <p class="text-4xl font-semibold">
+      {{ hours.toString().padStart(2, '0') }}:{{ minutes.toString().padStart(2, '0') }}:{{ seconds.toString().padStart(2, '0') }}
+    </p>
+  </div>
+  <div v-else>
+    <h1 class="text-6xl font-bold text-yellow-400 animate-bounce">Selamat Tahun Baru 2025!</h1>
+    <div class="relative mt-8">
+      <!-- Kembang api -->
+      <div class="absolute bg-red-500 w-4 h-4 rounded-full firework" style="left: 50%; top: 30%;"></div>
+      <div class="absolute bg-blue-500 w-4 h-4 rounded-full firework" style="left: 40%; top: 40%;"></div>
+      <div class="absolute bg-green-500 w-4 h-4 rounded-full firework" style="left: 60%; top: 40%;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    };
+  },
+  methods: {
+    calculateCountdown() {
+      const now = dayjs(); // Waktu saat ini
+      const endOfYear = dayjs().endOf('year'); // Akhir tahun
+      const difference = endOfYear.diff(now, 'second'); // Selisih dalam detik
+
+      if (difference > 0) {
+        this.days = Math.floor(difference / (3600 * 24));
+        this.hours = Math.floor((difference % (3600 * 24)) / 3600);
+        this.minutes = Math.floor((difference % 3600) / 60);
+        this.seconds = difference % 60;
+      } else {
+        this.days = this.hours = this.minutes = this.seconds = 0;
+      }
+    },
+    startCountdown() {
+      this.calculateCountdown();
+      setInterval(() => {
+        this.calculateCountdown();
+      }, 1000);
+    },
+  },
+  mounted() {
+    this.startCountdown();
+  }
+}).mount("#app");
+</script>
+
+</body>
+</html>
